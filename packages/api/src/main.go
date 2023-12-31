@@ -2,16 +2,18 @@ package main
 
 import (
 	"log"
-	"net/http"
 
+	"github.com/FukeKazki/ta-dashboard/src/interface/handler"
+	"github.com/FukeKazki/ta-dashboard/src/interface/router"
 	"github.com/labstack/echo/v4"
 )
 
 func main() {
 	log.Println("Starting TaDashboard API hello")
 	e := echo.New()
-	e.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello, World!")
-	})
+
+	stageHandler := handler.NewStageHandler()
+	router.InitStageRouter(e, stageHandler)
+
 	e.Logger.Fatal(e.Start(":4000"))
 }
