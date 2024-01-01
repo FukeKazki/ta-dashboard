@@ -15,6 +15,10 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSI
   && tar -C /usr/local/bin -xzvf dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
   && rm dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
+# sql-migrateのインストール
+# https://github.com/rubenv/sql-migrate/pull/259
+RUN CGO_CFLAGS="-D_LARGEFILE64_SOURCE" go install github.com/rubenv/sql-migrate/...@v1.6.0
+
 # 開発時のみ必要なツール
 RUN go install github.com/cosmtrek/air@v1.40.4 && \
   go install github.com/swaggo/swag/cmd/swag@v1.16.2 && \
