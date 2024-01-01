@@ -9,4 +9,4 @@ create table course (
 ) comment="コース";
 
 -- +migrate Down
-drop table;
+drop table course;
