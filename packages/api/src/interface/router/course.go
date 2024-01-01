@@ -5,6 +5,6 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func InitStageRouter(e *echo.Echo, stageHandler handler.StageHandler) {
-	e.GET("/stages", stageHandler.GetAll())
+func InitCourseRouter(e *echo.Echo, courseHandler handler.CourseHandler) {
+	e.GET("/course", courseHandler.GetAll())
 }

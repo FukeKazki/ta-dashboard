@@ -13,9 +13,9 @@ func main() {
 	log.Println("Starting TaDashboard API hello")
 	e := echo.New()
 
-	stageUsecase := usecase.NewStageUsecase()
-	stageHandler := handler.NewStageHandler(stageUsecase)
-	router.InitStageRouter(e, stageHandler)
+	courseUsecase := usecase.NewCourseUsecase()
+	courseHandler := handler.NewcourseHandler(courseUsecase)
+	router.InitCourseRouter(e, courseHandler)
 
 	e.Logger.Fatal(e.Start(":4000"))
 }
