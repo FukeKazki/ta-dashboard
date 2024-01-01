@@ -24,5 +24,10 @@ func main() {
 	courseHandler := handler.NewcourseHandler(courseUsecase)
 	router.InitCourseRouter(e, courseHandler)
 
+	timeAttackRepository := infrastracture.NewTimeAttackRepository(db.Conn)
+	timeAttackUsecase := usecase.NewTimeAttackUsecase(timeAttackRepository)
+	timeAttackHandler := handler.NewTimeAttackHandler(timeAttackUsecase)
+	router.InitTimeAttackRouter(e, timeAttackHandler)
+
 	e.Logger.Fatal(e.Start(":4000"))
 }
