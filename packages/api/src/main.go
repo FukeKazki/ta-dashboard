@@ -8,8 +8,16 @@ import (
 	"github.com/FukeKazki/ta-dashboard/src/interface/handler"
 	"github.com/FukeKazki/ta-dashboard/src/interface/router"
 	"github.com/FukeKazki/ta-dashboard/src/usecase"
+	"github.com/golang-jwt/jwt/v5"
+	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
 )
+
+type jwtCustomClaims struct {
+	Name  string `json:"name"`
+	Admin bool   `json:"admin"`
+	jwt.RegisteredClaims
+}
 
 func main() {
 	log.Println("Starting TaDashboard API hello")
@@ -24,10 +32,24 @@ func main() {
 	courseHandler := handler.NewcourseHandler(courseUsecase)
 	router.InitCourseRouter(e, courseHandler)
 
+	userRepository := infrastracture.NewUserRepository(db.Conn)
+	userUsecase := usecase.NewUserUsecase(userRepository)
+	userHandler := handler.NewUserHandler(userUsecase)
+	router.InitUserRouter(e, userHandler)
+
+	r := e.Group("/api")
+	config := echojwt.Config{
+		NewClaimsFunc: func(c echo.Context) jwt.Claims {
+			return new(jwtCustomClaims)
+		},
+		SigningKey: []byte("secret"),
+	}
+	r.Use(echojwt.WithConfig(config))
+
 	timeAttackRepository := infrastracture.NewTimeAttackRepository(db.Conn)
 	timeAttackUsecase := usecase.NewTimeAttackUsecase(timeAttackRepository)
 	timeAttackHandler := handler.NewTimeAttackHandler(timeAttackUsecase)
-	router.InitTimeAttackRouter(e, timeAttackHandler)
+	router.InitTimeAttackRouter(r, timeAttackHandler)
 
 	e.Logger.Fatal(e.Start(":4000"))
 }

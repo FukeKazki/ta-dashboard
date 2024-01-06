@@ -6,5 +6,8 @@ import (
 )
 
 func InitTimeAttackRouter(e *echo.Echo, timeAttackHandler handler.TimeAttackHandler) {
+	user := c.Get("user").(*jwt.Token)
+	claims := user.Claims.(*jwtCustomClaims)
+	name := claims.Name
 	e.GET("/dashboard", timeAttackHandler.FindUserTARecord())
 }
