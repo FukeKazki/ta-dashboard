@@ -32,7 +32,12 @@ func main() {
 	courseHandler := handler.NewcourseHandler(courseUsecase)
 	router.InitCourseRouter(e, courseHandler)
 
-	r := e
+	userRepository := infrastracture.NewUserRepository(db.Conn)
+	userUsecase := usecase.NewUserUsecase(userRepository)
+	userHandler := handler.NewUserHandler(userUsecase)
+	router.InitUserRouter(e, userHandler)
+
+	r := e.Group("/api")
 	config := echojwt.Config{
 		NewClaimsFunc: func(c echo.Context) jwt.Claims {
 			return new(jwtCustomClaims)
