@@ -27,11 +27,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	courseRepository := infrastracture.NewCourseRepository(db.Conn)
-	courseUsecase := usecase.NewCourseUsecase(courseRepository)
-	courseHandler := handler.NewcourseHandler(courseUsecase)
-	router.InitCourseRouter(e, courseHandler)
-
 	userRepository := infrastracture.NewUserRepository(db.Conn)
 	userUsecase := usecase.NewUserUsecase(userRepository)
 	userHandler := handler.NewUserHandler(userUsecase)
