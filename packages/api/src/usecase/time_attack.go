@@ -6,7 +6,9 @@ import (
 )
 
 type TimeAttackUsecase interface {
-	FindUserTARecord() ([]*model.TimeAttack, error)
+	FindUserTARecord(userName string) ([]*model.TimeAttack, error)
+	CreateTARecord(timeAttack *model.TimeAttack, publicProfileId int) (*model.TimeAttack, error)
+	UpdateTARecord(recordId int, timeAttack *model.TimeAttack) error
 }
 
 type timeAttackUsecase struct {
@@ -17,11 +19,29 @@ func NewTimeAttackUsecase(timeAttackRepo repository.TimeAttackRepository) TimeAt
 	return &timeAttackUsecase{timeAttackRepository: timeAttackRepo}
 }
 
-func (u *timeAttackUsecase) FindUserTARecord() ([]*model.TimeAttack, error) {
-	timeAttacks, err := u.timeAttackRepository.FindUserTARecord(1)
+func (u *timeAttackUsecase) FindUserTARecord(userName string) ([]*model.TimeAttack, error) {
+	timeAttacks, err := u.timeAttackRepository.FindUserTARecord(userName)
 	if err != nil {
 		return nil, err
 	}
 
 	return timeAttacks, nil
+}
+
+func (u *timeAttackUsecase) CreateTARecord(timeAttack *model.TimeAttack, publicProfileId int) (*model.TimeAttack, error) {
+	timeAttack, err := u.timeAttackRepository.CreateTARecord(timeAttack, publicProfileId)
+	if err != nil {
+		return nil, err
+	}
+
+	return timeAttack, nil
+}
+
+func (u *timeAttackUsecase) UpdateTARecord(recordId int, timeAttack *model.TimeAttack) error {
+	err := u.timeAttackRepository.UpdateTARecord(recordId, timeAttack)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -14,9 +14,19 @@ func NewTimeAttackRepository(conn *sql.DB) *TimeAttackRepository {
 	return &TimeAttackRepository{Connection: conn}
 }
 
-func (r *TimeAttackRepository) FindUserTARecord(userId int) ([]*model.TimeAttack, error) {
+func (r *TimeAttackRepository) FindUserTARecord(userName string) ([]*model.TimeAttack, error) {
 	timeAttacks := make([]*model.TimeAttack, 0)
-	rows, err := r.Connection.Query("select course.name as 'couse_name', first_lap, second_lap, third_lap, total_lap, thumbnail from record left outer join course on record.course_id=course.id where user_id=1;")
+
+	// select course.name as 'couse_name',
+	// first_lap,
+	// second_lap,
+	// third_lap,
+	// total_lap,
+	// thumbnail,
+	// from record left outer join course on record.course_id=course.id
+	// left outer join public_profile pp on pp.id=record.public_profile_id
+	// where pp.name='ユーザー1'
+	rows, err := r.Connection.Query("select course.name as 'couse_name', first_lap, second_lap, third_lap, total_lap, thumbnail from record left outer join course on record.course_id=course.id left outer join public_profile pp on pp.id=record.public_profile_id where pp.name=?", userName)
 	if err != nil {
 		return nil, err
 	}
@@ -33,4 +43,21 @@ func (r *TimeAttackRepository) FindUserTARecord(userId int) ([]*model.TimeAttack
 	}
 
 	return timeAttacks, nil
+}
+
+func (r *TimeAttackRepository) CreateTARecord(timeAttack *model.TimeAttack, publicProfileId int) (*model.TimeAttack, error) {
+	_, err := r.Connection.Exec("insert into record (course_id, public_profile_id, first_lap, second_lap, third_lap, total_lap) values (?, ?, ?, ?, ?, ?)", timeAttack.Course.ID, publicProfileId, timeAttack.Record.FirstLap, timeAttack.Record.SecondLap, timeAttack.Record.ThirdLap, timeAttack.Record.TotalLap)
+	if err != nil {
+		return nil, err
+	}
+	return timeAttack, nil
+}
+
+func (r *TimeAttackRepository) UpdateTARecord(recordId int, timeAttack *model.TimeAttack) error {
+	_, err := r.Connection.Exec("update record set first_lap=?, second_lap=?, third_lap=?, total_lap=? where id=?", timeAttack.Record.FirstLap, timeAttack.Record.SecondLap, timeAttack.Record.ThirdLap, timeAttack.Record.TotalLap, recordId)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
