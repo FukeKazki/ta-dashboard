@@ -19,6 +19,7 @@ func NewUserUsecase(userRepo repository.UserRepository) UserUsecase {
 
 func (u *userUsecase) CreateUser(username string, password string) (*model.User, error) {
 	user, err := u.userRepo.Create(&model.User{Name: username, Password: password})
+	// TODO: User作成時に
 	if err != nil {
 		return nil, err
 	}

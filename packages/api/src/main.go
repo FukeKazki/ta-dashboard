@@ -14,8 +14,7 @@ import (
 )
 
 type jwtCustomClaims struct {
-	Name  string `json:"name"`
-	Admin bool   `json:"admin"`
+	userId string `json:"userId"`
 	jwt.RegisteredClaims
 }
 
@@ -27,12 +26,14 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	userRepository := infrastracture.NewUserRepository(db.Conn)
 	userUsecase := usecase.NewUserUsecase(userRepository)
 	userHandler := handler.NewUserHandler(userUsecase)
 	router.InitUserRouter(e, userHandler)
 
 	r := e.Group("/api")
+
 	config := echojwt.Config{
 		NewClaimsFunc: func(c echo.Context) jwt.Claims {
 			return new(jwtCustomClaims)

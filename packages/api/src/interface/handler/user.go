@@ -16,6 +16,7 @@ type UserHandler interface {
 type userHandler struct {
 	userUsecase usecase.UserUsecase
 }
+
 type jwtCustomClaims struct {
 	userId string `json:"userId"`
 	jwt.RegisteredClaims
