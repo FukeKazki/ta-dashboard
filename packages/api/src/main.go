@@ -13,16 +13,11 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type jwtCustomClaims struct {
-	userId string `json:"userId"`
-	jwt.RegisteredClaims
-}
-
 func main() {
 	log.Println("Starting TaDashboard API hello")
 	e := echo.New()
 
-	db, err := database.NewClient()
+	db, err := config.NewClient()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -36,7 +31,7 @@ func main() {
 
 	config := echojwt.Config{
 		NewClaimsFunc: func(c echo.Context) jwt.Claims {
-			return new(jwtCustomClaims)
+			return new(config.JwtCustomClaims)
 		},
 		SigningKey: []byte("secret"),
 	}

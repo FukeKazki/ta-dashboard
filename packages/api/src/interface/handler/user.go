@@ -1,9 +1,13 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
+	"time"
 
+	"github.com/FukeKazki/ta-dashboard/src/config"
 	"github.com/FukeKazki/ta-dashboard/src/usecase"
+
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
 )
@@ -17,11 +21,6 @@ type userHandler struct {
 	userUsecase usecase.UserUsecase
 }
 
-type jwtCustomClaims struct {
-	userId string `json:"userId"`
-	jwt.RegisteredClaims
-}
-
 func NewUserHandler(userUsecase usecase.UserUsecase) UserHandler {
 	return &userHandler{userUsecase: userUsecase}
 }
@@ -33,9 +32,12 @@ func (h *userHandler) Signup() echo.HandlerFunc {
 
 		user, err := h.userUsecase.CreateUser(userName, password)
 		// create jwt token
-		claims := &jwtCustomClaims{
+		fmt.Println(user.Id.String())
+		claims := &config.JwtCustomClaims{
 			user.Id.String(),
-			jwt.RegisteredClaims{},
+			jwt.RegisteredClaims{
+				ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 1)),
+			},
 		}
 		token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 		t, err := token.SignedString([]byte("secret"))
