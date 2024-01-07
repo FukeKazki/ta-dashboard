@@ -11,15 +11,21 @@ type UserUsecase interface {
 
 type userUsecase struct {
 	userRepo repository.UserRepository
+	taRepo   repository.TimeAttackRepository
 }
 
-func NewUserUsecase(userRepo repository.UserRepository) UserUsecase {
-	return &userUsecase{userRepo: userRepo}
+func NewUserUsecase(userRepo repository.UserRepository, taRepo repository.TimeAttackRepository) UserUsecase {
+	return &userUsecase{userRepo: userRepo, taRepo: taRepo}
 }
 
 func (u *userUsecase) CreateUser(username string, password string) (*model.User, error) {
 	user, err := u.userRepo.Create(&model.User{Name: username, Password: password})
-	// TODO: User作成時に
+	if err != nil {
+		return nil, err
+	}
+	// User作成時に全てのコースのタイムアタックを作成する
+	err = u.taRepo.CreateAllTARecord(username)
+
 	if err != nil {
 		return nil, err
 	}

@@ -36,8 +36,8 @@ func (r *TimeAttackRepository) FindUserTARecord(userName string) ([]*model.TimeA
 	return timeAttacks, nil
 }
 
-func (r *TimeAttackRepository) CreateTARecord(timeAttack *model.TimeAttack, userId int) (*model.TimeAttack, error) {
-	_, err := r.Connection.Exec("insert into record (course_id, user_id, first_lap, second_lap, third_lap, total_lap) values (?, ?, ?, ?, ?, ?)", timeAttack.Course.ID, userId, timeAttack.Record.FirstLap, timeAttack.Record.SecondLap, timeAttack.Record.ThirdLap, timeAttack.Record.TotalLap)
+func (r *TimeAttackRepository) CreateTARecord(timeAttack *model.TimeAttack, userName string) (*model.TimeAttack, error) {
+	_, err := r.Connection.Exec("insert into record (course_id, user_name, first_lap, second_lap, third_lap, total_lap) values (?, ?, ?, ?, ?, ?)", timeAttack.Course.ID, userName, timeAttack.Record.FirstLap, timeAttack.Record.SecondLap, timeAttack.Record.ThirdLap, timeAttack.Record.TotalLap)
 	if err != nil {
 		return nil, err
 	}
@@ -50,5 +50,24 @@ func (r *TimeAttackRepository) UpdateTARecord(recordId int, timeAttack *model.Ti
 		return err
 	}
 
+	return nil
+}
+
+func (r *TimeAttackRepository) CreateAllTARecord(userName string) error {
+	rows, err := r.Connection.Query("select id from course")
+	if err != nil {
+		return err
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		courseId := 0
+		err := rows.Scan(&courseId)
+		if err != nil {
+			return err
+		}
+		_, err = r.Connection.Exec("insert into record (course_id, user_name, total_lap) values (?, ?, ?)", courseId, userName, "")
+	}
 	return nil
 }

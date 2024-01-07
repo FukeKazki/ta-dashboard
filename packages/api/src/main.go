@@ -23,7 +23,9 @@ func main() {
 	}
 
 	userRepository := infrastracture.NewUserRepository(db.Conn)
-	userUsecase := usecase.NewUserUsecase(userRepository)
+	timeAttackRepository := infrastracture.NewTimeAttackRepository(db.Conn)
+
+	userUsecase := usecase.NewUserUsecase(userRepository, timeAttackRepository)
 	userHandler := handler.NewUserHandler(userUsecase)
 	router.InitUserRouter(e, userHandler)
 
@@ -37,7 +39,6 @@ func main() {
 	}
 	r.Use(echojwt.WithConfig(config))
 
-	timeAttackRepository := infrastracture.NewTimeAttackRepository(db.Conn)
 	timeAttackUsecase := usecase.NewTimeAttackUsecase(timeAttackRepository)
 	timeAttackHandler := handler.NewTimeAttackHandler(timeAttackUsecase)
 	router.InitTimeAttackRouter(r, timeAttackHandler)

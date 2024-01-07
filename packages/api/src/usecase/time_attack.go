@@ -7,7 +7,7 @@ import (
 
 type TimeAttackUsecase interface {
 	FindUserTARecord(userName string) ([]*model.TimeAttack, error)
-	CreateTARecord(timeAttack *model.TimeAttack, publicProfileId int) (*model.TimeAttack, error)
+	CreateTARecord(timeAttack *model.TimeAttack, userName string) (*model.TimeAttack, error)
 	UpdateTARecord(recordId int, timeAttack *model.TimeAttack) error
 }
 
@@ -28,8 +28,8 @@ func (u *timeAttackUsecase) FindUserTARecord(userName string) ([]*model.TimeAtta
 	return timeAttacks, nil
 }
 
-func (u *timeAttackUsecase) CreateTARecord(timeAttack *model.TimeAttack, publicProfileId int) (*model.TimeAttack, error) {
-	timeAttack, err := u.timeAttackRepository.CreateTARecord(timeAttack, publicProfileId)
+func (u *timeAttackUsecase) CreateTARecord(timeAttack *model.TimeAttack, userName string) (*model.TimeAttack, error) {
+	timeAttack, err := u.timeAttackRepository.CreateTARecord(timeAttack, userName)
 	if err != nil {
 		return nil, err
 	}
