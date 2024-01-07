@@ -34,7 +34,7 @@ func (h *userHandler) Signup() echo.HandlerFunc {
 		// create jwt token
 		fmt.Println(user.Id.String())
 		claims := &config.JwtCustomClaims{
-			user.Id.String(),
+			user.Name,
 			jwt.RegisteredClaims{
 				ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 1)),
 			},
