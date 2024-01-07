@@ -17,7 +17,7 @@ func NewTimeAttackRepository(conn *sql.DB) *TimeAttackRepository {
 func (r *TimeAttackRepository) FindUserTARecord(userName string) ([]*model.TimeAttack, error) {
 	timeAttacks := make([]*model.TimeAttack, 0)
 
-	rows, err := r.Connection.Query("select course.name as 'couse_name', first_lap, second_lap, third_lap, total_lap, thumbnail from record left outer join course on record.course_id=course.id left outer join user on user.id=record.user_id where user.name=?", userName)
+	rows, err := r.Connection.Query("select course.name as 'couse_name', first_lap, second_lap, third_lap, total_lap, thumbnail from record left outer join course on record.course_id=course.id left outer join user on user.name=record.user_name where user_name=?", userName)
 	if err != nil {
 		return nil, err
 	}
@@ -67,7 +67,7 @@ func (r *TimeAttackRepository) CreateAllTARecord(userName string) error {
 		if err != nil {
 			return err
 		}
-		_, err = r.Connection.Exec("insert into record (course_id, user_name, total_lap) values (?, ?, ?)", courseId, userName, "")
+		_, err = r.Connection.Exec("insert into record (course_id, user_name, total_lap) values (?, ?, ?)", courseId, userName, "00:00.00")
 	}
 	return nil
 }
