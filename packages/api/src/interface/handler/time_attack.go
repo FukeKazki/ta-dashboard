@@ -48,21 +48,24 @@ func (h *timeAttackHandler) CreateTARecord() echo.HandlerFunc {
 
 func (h *timeAttackHandler) UpdateTARecord() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		// TODO: ここでjwtの認証を行う
 		user := c.Get("user").(*jwt.Token)
 		claims := user.Claims.(*config.JwtCustomClaims)
-		userID := claims.UserId
-		fmt.Println(user, claims, userID)
-		id, err := strconv.Atoi(c.Param("id"))
+		userName := claims.UserName
+		fmt.Println(user, claims, userName)
+		paramUserName := c.Param("userName")
+		if userName != paramUserName {
+			return c.JSON(http.StatusBadRequest, "invalid user")
+		}
+		recordId, err := strconv.Atoi(c.Param("recordId"))
 		if err != nil {
-			return err
+			return c.JSON(http.StatusBadRequest, err.Error())
 		}
 		u := new(model.TimeAttack)
 		if err := c.Bind(u); err != nil {
 			return err
 		}
 
-		err = h.timeAttackUsecase.UpdateTARecord(id, u)
+		err = h.timeAttackUsecase.UpdateTARecord(recordId, u)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, err.Error())
 		}

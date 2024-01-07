@@ -7,5 +7,5 @@ import (
 
 func InitTimeAttackRouter(e *echo.Group, timeAttackHandler handler.TimeAttackHandler) {
 	e.GET("/ta/:userName", timeAttackHandler.FindUserTARecord())
-	e.POST("/ta/:userName/:id", timeAttackHandler.UpdateTARecord())
+	e.POST("/ta/:userName/:recordId", timeAttackHandler.UpdateTARecord())
 }
