@@ -7,6 +7,7 @@ import (
 
 type UserUsecase interface {
 	CreateUser(username string, password string) (*model.User, error)
+	FindByName(name string) (*model.User, error)
 }
 
 type userUsecase struct {
@@ -26,6 +27,15 @@ func (u *userUsecase) CreateUser(username string, password string) (*model.User,
 	// User作成時に全てのコースのタイムアタックを作成する
 	err = u.taRepo.CreateAllTARecord(username)
 
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
+func (u *userUsecase) FindByName(name string) (*model.User, error) {
+	user, err := u.userRepo.FindByName(name)
 	if err != nil {
 		return nil, err
 	}

@@ -28,3 +28,12 @@ func (r *UserRepository) Create(user *model.User) (*model.User, error) {
 	return &model.User{Id: uu, Name: user.Name, Password: user.Password}, nil
 
 }
+
+func (r *UserRepository) FindByName(name string) (*model.User, error) {
+	var user model.User
+	err := r.Connection.QueryRow("SELECT ID, NAME, PASSWORD FROM user WHERE NAME = ?", name).Scan(&user.Id, &user.Name, &user.Password)
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
+}

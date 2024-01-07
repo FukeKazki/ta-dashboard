@@ -53,24 +53,28 @@ func (h *userHandler) Signup() echo.HandlerFunc {
 
 func (h *userHandler) Login() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		// userName := c.FormValue("username")
-		// password := c.FormValue("password")
-
-		// if userName == "jon" && password == "shhh!" {
-		// 	claims := &jwtCustomClaims{
-		// 		"Jon Snow",
-		// 		true,
-		// 		jwt.RegisteredClaims{},
-		// 	}
-		// 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-		// 	t, err := token.SignedString([]byte("secret"))
-		// 	if err != nil {
-		// 		return err
-		// 	}
-		// 	return c.JSON(http.StatusOK, map[string]string{
-		// 		"token": t,
-		// 	})
-		// }
+		userName := c.FormValue("username")
+		password := c.FormValue("password")
+		user, err := h.userUsecase.FindByName(userName)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, err.Error())
+		}
+		if user.Password == password {
+			claims := &config.JwtCustomClaims{
+				user.Name,
+				jwt.RegisteredClaims{
+					ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 1)),
+				},
+			}
+			token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+			t, err := token.SignedString([]byte("secret"))
+			if err != nil {
+				return err
+			}
+			return c.JSON(http.StatusOK, map[string]string{
+				"token": t,
+			})
+		}
 		return echo.ErrUnauthorized
 	}
 }
