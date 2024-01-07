@@ -21,7 +21,7 @@ func (r *UserRepository) Create(user *model.User) (*model.User, error) {
 	userID, err := uu.MarshalBinary()
 
 	// insert user
-	_, err = r.Connection.Exec("INSERT INTO user (ID, NAME, PASSWORD) VALUES (?, ?, ?, ?)", userID, user.Name, user.Password)
+	_, err = r.Connection.Exec("INSERT INTO user (ID, NAME, PASSWORD) VALUES (?, ?, ?)", userID, user.Name, user.Password)
 	if err != nil {
 		return nil, err
 	}
