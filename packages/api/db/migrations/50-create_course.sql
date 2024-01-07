@@ -5,7 +5,8 @@ create table course (
   created_at datetime not null default current_timestamp,
   updated_at datetime on update current_timestamp,
   name varchar(255) not null comment 'コース名',
-  thumbnail varchar(255) not null comment 'サムネイル'
+  thumbnail varchar(255) not null comment 'サムネイル',
+  unique key (name)
 ) comment="コース";
 
 -- +migrate Down
