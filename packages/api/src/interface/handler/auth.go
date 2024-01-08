@@ -13,20 +13,20 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type UserHandler interface {
+type AuthHandler interface {
 	Signup() echo.HandlerFunc
 	Login() echo.HandlerFunc
 }
 
-type userHandler struct {
+type authHandler struct {
 	userUsecase usecase.UserUsecase
 }
 
-func NewUserHandler(userUsecase usecase.UserUsecase) UserHandler {
-	return &userHandler{userUsecase: userUsecase}
+func NewAuthHandler(userUsecase usecase.UserUsecase) AuthHandler {
+	return &authHandler{userUsecase: userUsecase}
 }
 
-func (h *userHandler) Signup() echo.HandlerFunc {
+func (h *authHandler) Signup() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		userName := c.FormValue("username")
 		password := c.FormValue("password")
@@ -57,7 +57,7 @@ func (h *userHandler) Signup() echo.HandlerFunc {
 	}
 }
 
-func (h *userHandler) Login() echo.HandlerFunc {
+func (h *authHandler) Login() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		userName := c.FormValue("username")
 		password := c.FormValue("password")

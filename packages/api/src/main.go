@@ -26,8 +26,8 @@ func main() {
 	timeAttackRepository := infrastracture.NewTimeAttackRepository(db.Conn)
 
 	userUsecase := usecase.NewUserUsecase(userRepository, timeAttackRepository)
-	userHandler := handler.NewUserHandler(userUsecase)
-	router.InitUserRouter(e, userHandler)
+	authHandler := handler.NewAuthHandler(userUsecase)
+	router.InitAuthRouter(e, authHandler)
 
 	r := e.Group("/api")
 
