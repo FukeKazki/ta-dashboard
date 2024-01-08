@@ -15,7 +15,6 @@ import (
 
 type TimeAttackHandler interface {
 	FindUserTARecord() echo.HandlerFunc
-	CreateTARecord() echo.HandlerFunc
 	UpdateTARecord() echo.HandlerFunc
 }
 
@@ -37,12 +36,6 @@ func (h *timeAttackHandler) FindUserTARecord() echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, err.Error())
 		}
 		return c.JSON(http.StatusOK, foundedcourses)
-	}
-}
-
-func (h *timeAttackHandler) CreateTARecord() echo.HandlerFunc {
-	return func(c echo.Context) error {
-		return nil
 	}
 }
 
