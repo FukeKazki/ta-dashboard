@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/FukeKazki/ta-dashboard/src/config"
+	"github.com/FukeKazki/ta-dashboard/src/domain/model"
 	"github.com/FukeKazki/ta-dashboard/src/usecase"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -31,10 +32,14 @@ func (h *userHandler) Signup() echo.HandlerFunc {
 		password := c.FormValue("password")
 
 		user, err := h.userUsecase.CreateUser(userName, password)
+		// 詰め変える
+		userDto := &model.UserDto{
+			Name: user.Name.Value(),
+		}
 		// create jwt token
 		fmt.Println(user.Id.String())
 		claims := &config.JwtCustomClaims{
-			user.Name,
+			user.Name.Value(),
 			jwt.RegisteredClaims{
 				ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 1)),
 			},
@@ -45,8 +50,9 @@ func (h *userHandler) Signup() echo.HandlerFunc {
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, err.Error())
 		}
-		return c.JSON(http.StatusOK, map[string]string{
+		return c.JSON(http.StatusOK, map[string]interface{}{
 			"token": t,
+			"user":  userDto,
 		})
 	}
 }
@@ -59,9 +65,14 @@ func (h *userHandler) Login() echo.HandlerFunc {
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, err.Error())
 		}
+		// 詰め変える
+		userDto := &model.UserDto{
+			Name: user.Name.Value(),
+		}
+
 		if user.Password == password {
 			claims := &config.JwtCustomClaims{
-				user.Name,
+				user.Name.Value(),
 				jwt.RegisteredClaims{
 					ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 1)),
 				},
@@ -71,8 +82,9 @@ func (h *userHandler) Login() echo.HandlerFunc {
 			if err != nil {
 				return err
 			}
-			return c.JSON(http.StatusOK, map[string]string{
+			return c.JSON(http.StatusOK, map[string]interface{}{
 				"token": t,
+				"user":  userDto,
 			})
 		}
 		return echo.ErrUnauthorized

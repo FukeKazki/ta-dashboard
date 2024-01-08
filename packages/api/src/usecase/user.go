@@ -20,7 +20,15 @@ func NewUserUsecase(userRepo repository.UserRepository, taRepo repository.TimeAt
 }
 
 func (u *userUsecase) CreateUser(username string, password string) (*model.User, error) {
-	user, err := u.userRepo.Create(&model.User{Name: username, Password: password})
+	userName, err := model.NewUserName(username)
+	if err != nil {
+		return nil, err
+	}
+
+	user, err := u.userRepo.Create(&model.User{
+		Name:     *userName,
+		Password: password,
+	})
 	if err != nil {
 		return nil, err
 	}
